@@ -1,0 +1,88 @@
+---
+- name: config inetRouter
+  hosts: inetRouter
+  gather_facts: yes
+  tasks:
+
+    - name: ip forward
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
+
+    - name: install iptables-persistent
+      ansible.builtin.apt:
+        name: iptables-persistent
+        state: present
+        update_cache: yes
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+
+    - name: config NAT
+      ansible.builtin.iptables:
+        table: nat
+        chain: POSTROUTING
+        out_interface: enp0s3
+        jump: MASQUERADE
+
+    - name: Set FORWARD policy
+      ansible.builtin.iptables:
+        chain: FORWARD
+        policy: ACCEPT
+
+    - name: Delete Vagrant route
+      ansible.builtin.shell: |
+        ip route del 192.168.0.1 dev enp0s3 || true
+
+    - name: Route to LAN
+      ansible.builtin.shell: |
+        ip route add 192.168.0.0/16 via 192.168.255.2 || true
+
+    - name: Save iptables rules
+      ansible.builtin.shell: netfilter-persistent save
+
+- name: config centralRouter
+  hosts: centralRouter
+  gather_facts: yes
+  tasks:
+
+    - name: ip forward
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
+
+    - name: default gw via inetRouter
+      ansible.builtin.shell: |
+        ip route del default || true
+        ip route add default via 192.168.255.1
+
+- name: config office1Router
+  hosts: office1Router
+  gather_facts: yes
+  tasks:
+
+    - name: ip forward
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
+
+- name: config office2Router
+  hosts: office2Router
+  gather_facts: yes
+  tasks:
+
+    - name: ip forward
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
