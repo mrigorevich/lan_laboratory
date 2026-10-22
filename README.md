@@ -44,10 +44,11 @@ ________________________________________________________________________________
 
 Целевая схема сети:<br><br>
 <img width="675" height="785" alt="image" src="https://github.com/user-attachments/assets/59429bcd-cb0a-4e25-be14-b8efd2f36d64" /><br><br>
-В исходный vagrantfile добавляем необходимые сервера. Поднимаем стенд из получившегося Vagrantfile (ССЫЛКА) <br><br>
+В исходный vagrantfile добавляем необходимые сервера. Поднимаем стенд из получившегося [Vagrantfile](https://github.com/mrigorevich/lan_laboratory/blob/main/Vagrantfile) <br><br>
 В силу особенностей архитектуры ВМ с Ansible поднималась так же из Vagrant, и плейбуки писались/дебажились внутри этой ВМ. В текущем Vagrantfile она закомментирована, плейбуки лежат отдельно:<br>
-
-
+[inventory.ini](https://github.com/mrigorevich/lan_laboratory/blob/main/inventory.ini) <br>
+[setup_routers.yml](https://github.com/mrigorevich/lan_laboratory/blob/main/setup_routers.yml) <br>
+[save_netplan.yml](https://github.com/mrigorevich/lan_laboratory/blob/main/save_netplan.yml) <br><br>
 После поднятия стенда запускаем плейбук "setup_routers.yml", затем "save_netplan.yml".<br><br>
 В итоге имеем 8 ВМ: ansible + 7шт по заданию<br><br>
 <img width="624" height="629" alt="image" src="https://github.com/user-attachments/assets/f0f3b144-7852-49ad-8e3f-fdf1720dcc2f" /><br><br>
